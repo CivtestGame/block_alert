@@ -1,7 +1,7 @@
 minetest.register_node("block_alert:notifier",
 {
-    description = "Notifier block.",
-    tiles = {"^[colorize:#802BB1"},
+    description = "Notifier Block",
+    tiles = {"block_alert_notifier.png"},
     groups = {choppy = 2, oddly_breakable_by_hand = 2, wood = 1},
 
     after_place_node  = function(pos, placer)
@@ -22,7 +22,7 @@ minetest.register_craft({
     output = "block_alert:notifier",
     recipe = {
         {"group:wood", "group:wood"     ,"group:wood"},
-        {"group:wood", "default:gold_ingot","group:wood"},
+        {"group:wood", "default:iron_ingot","group:wood"},
         {"group:wood", "group:wood"     ,"group:wood"}
     }
 })
@@ -30,8 +30,8 @@ minetest.register_craft({
 
 minetest.register_node("block_alert:recorder",
 {
-    description = "Recorder block.",
-    tiles = {"^[colorize:#0000FF"},
+    description = "Recorder Block",
+    tiles = {"block_alert_recorder.png"},
     groups = {choppy = 2, oddly_breakable_by_hand = 2, wood = 1},
 
     after_place_node  = function(pos, placer)
@@ -44,7 +44,7 @@ minetest.register_node("block_alert:recorder",
     on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
         local pname = clicker and clicker:get_player_name() or ""
         if(util.check_permission(pos,pname)) then
-            minetest.show_formspec(pname, "block_alert:recorder_log", recorder.get_formspec(pos))            
+            minetest.show_formspec(pname, "block_alert:recorder_log", recorder.get_formspec(pos))
         end
     end
 })
@@ -54,7 +54,7 @@ minetest.register_craft({
     output = "block_alert:recorder",
     recipe = {
         {"group:wood", "group:wood"     ,"group:wood"},
-        {"group:wood", "default:diamond","group:wood"},
+        {"group:wood", "default:bronze_ingot","group:wood"},
         {"group:wood", "group:wood"     ,"group:wood"}
     }
 })
