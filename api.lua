@@ -4,7 +4,7 @@ minetest.register_node("block_alert:notifier",
     tiles = {"block_alert_notifier.png"},
     groups = {choppy = 2, oddly_breakable_by_hand = 2, wood = 1},
 
-    after_place_node  = function(pos, placer)
+    after_place_node = function(pos, placer)
         local meta = minetest.get_meta(pos)
         meta:mark_as_private("name")
         meta:set_string("name", "Notifier")
@@ -42,9 +42,11 @@ minetest.register_node("block_alert:recorder",
     end,
 
     on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-        local pname = clicker and clicker:get_player_name() or ""
-        if(util.check_permission(pos,pname)) then
-            minetest.show_formspec(pname, "block_alert:recorder_log", recorder.get_formspec(pos))
+        local pname = (clicker and clicker:get_player_name()) or ""
+        if util.check_permission(pos, pname) then
+            minetest.show_formspec(
+               pname, "block_alert:recorder_log", recorder.get_formspec(pos)
+            )
         end
     end
 })
@@ -60,19 +62,26 @@ minetest.register_craft({
 })
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-    if formname ~= "block_alert:notifier_rename" then
-        return
+    if formname == "block_alert:notifier_rename" then
+       notifier.handle_formspec_submission(player, fields)
     end
-    notifier.handle_formspec_submission(player, fields)
 end)
 
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack, pointed_thing)
-    if placer and minetest.is_player(placer) then recorder.handle_block_event(pos, newnode.name, placer:get_player_name(), "placed") end
+    if placer and minetest.is_player(placer) then
+       recorder.handle_block_event(
+          pos, newnode.name, placer:get_player_name(), "placed"
+       )
+    end
     return false
 end)
 
 minetest.register_on_dignode(function(pos, oldnode, digger)
-    if digger and minetest.is_player(digger) then recorder.handle_block_event(pos, oldnode.name, digger:get_player_name(), "broke") end
+    if digger and minetest.is_player(digger) then
+       recorder.handle_block_event(
+          pos, oldnode.name, digger:get_player_name(), "broke"
+       )
+    end
 end)
 
 pmutils.register_player_move(function(player, playerHistory)
