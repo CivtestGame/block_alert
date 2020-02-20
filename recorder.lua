@@ -5,7 +5,7 @@ local function get_log(recorder_pos)
 end
 
 local function add_entry(recorder_pos, message)
-    local dated_message = os.date("[%Y-%m-%d %H:%M:%S] ") .. message
+    local dated_message = os.date("![%m-%d %H:%M:%S] ") .. message
     local log = get_log(recorder_pos)
     table.insert(log, 1, dated_message)
     if #log > 1000 then
