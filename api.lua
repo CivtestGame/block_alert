@@ -1,32 +1,3 @@
-minetest.register_node("block_alert:notifier",
-{
-    description = "Notifier Block",
-    tiles = {"block_alert_notifier.png"},
-    groups = {choppy = 2, oddly_breakable_by_hand = 2, wood = 1},
-
-    after_place_node = function(pos, placer)
-        local meta = minetest.get_meta(pos)
-        meta:mark_as_private("name")
-        meta:set_string("name", "Notifier")
-        meta:mark_as_private("notify_setting")
-        meta:set_string("notify_setting", "others")
-    end,
-
-    on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-        notifier.handle_right_click(pos, clicker)
-    end
-})
-
-minetest.register_craft({
-    type = "shaped",
-    output = "block_alert:notifier",
-    recipe = {
-        {"group:wood", "group:wood"     ,"group:wood"},
-        {"group:wood", "default:iron_ingot","group:wood"},
-        {"group:wood", "group:wood"     ,"group:wood"}
-    }
-})
-
 
 minetest.register_node("block_alert:recorder",
 {
@@ -60,12 +31,6 @@ minetest.register_craft({
         {"group:wood", "group:wood"     ,"group:wood"}
     }
 })
-
-minetest.register_on_player_receive_fields(function(player, formname, fields)
-    if formname == "block_alert:notifier_rename" then
-       notifier.handle_formspec_submission(player, fields)
-    end
-end)
 
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack, pointed_thing)
     if placer and minetest.is_player(placer) then

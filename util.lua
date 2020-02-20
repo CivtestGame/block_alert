@@ -1,20 +1,16 @@
 --for lack of a better name...
 local player_alert_status = {}
 
-local function handle_player_entry_event(player, node_pos)
+function util.handle_player_entry_event(player, node_pos)
     local node_name = minetest.get_node(node_pos).name
-    if node_name == "block_alert:notifier" then
-        notifier.handle_player_event(player, node_pos, "entered")
-    elseif node_name == "block_alert:recorder" then
+    if node_name == "block_alert:recorder" then
         recorder.handle_player_event(player, node_pos,"entered")
     end
 end
 
-local function handle_player_exit_event(player, node_pos)
+function util.handle_player_exit_event(player, node_pos)
     local node_name = minetest.get_node(node_pos).name
-    if node_name == "block_alert:notifier" then
-        notifier.handle_player_event(player, node_pos, "exited")
-    elseif node_name == "block_alert:recorder" then
+    if node_name == "block_alert:recorder" then
         recorder.handle_player_event(player, node_pos,"exited")
     end
 end
@@ -42,7 +38,7 @@ function util.check_new_player_move(player)
     local new_alert_list = util.find_nodes(
        player:get_pos(),
        5,
-       { "block_alert:notifier", "block_alert:recorder" }
+       { "block_alert:recorder" }
     )
 
     local lookup_table_new = {}

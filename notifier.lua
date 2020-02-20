@@ -1,4 +1,44 @@
-local playerRenamePos = {}
+
+minetest.register_node("block_alert:notifier",
+{
+    description = "Notifier Block",
+    tiles = {"block_alert_notifier.png"},
+    groups = {choppy = 2, oddly_breakable_by_hand = 2, wood = 1},
+
+    after_place_node = function(pos, placer)
+        local meta = minetest.get_meta(pos)
+        meta:mark_as_private("name")
+        meta:set_string("name", "Notifier")
+        meta:mark_as_private("notify_setting")
+        meta:set_string("notify_setting", "others")
+        SnitchRegistry.register("block_alert:notifier", pos)
+    end,
+    on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+       notifier.handle_formspec_open(pos, clicker)
+    end,
+    on_proximity_entered = function(pos, player)
+       notifier.handle_player_event(player, pos, "entered")
+    end,
+    on_proximity_exited = function(pos, player)
+       notifier.handle_player_event(player, pos, "exited")
+    end,
+    on_proximity_join = function(pos, player)
+       notifier.handle_player_event(player, pos, "logged in at")
+    end,
+    on_proximity_leave = function(pos, player)
+       notifier.handle_player_event(player, pos, "logged out at")
+    end
+})
+
+minetest.register_craft({
+    type = "shaped",
+    output = "block_alert:notifier",
+    recipe = {
+        {"group:wood", "group:wood"     ,"group:wood"},
+        {"group:wood", "default:iron_ingot","group:wood"},
+        {"group:wood", "group:wood"     ,"group:wood"}
+    }
+})
 
 local function get_formspec(name)
     local formspec = {
@@ -30,13 +70,16 @@ function notifier.handle_player_event(player, node_pos, event_type)
     end
 end
 
-function notifier.handle_right_click(pos, clicker)
+local playerRenamePos = {}
+
+function notifier.handle_formspec_open(pos, clicker)
     local pname = clicker and clicker:get_player_name() or ""
     local meta = minetest.get_meta(pos)
-    if util.check_permission(pos,pname) then
+    if util.check_permission(pos, pname) then
         playerRenamePos[pname] = pos
         minetest.show_formspec(
-           pname, "block_alert:notifier_rename", get_formspec(meta:get_string("name"))
+           pname, "block_alert:notifier_rename",
+           get_formspec(meta:get_string("name"))
         )
     end
 end
@@ -50,3 +93,9 @@ function notifier.handle_formspec_submission(player, fields)
         end
     end
 end
+
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+    if formname == "block_alert:notifier_rename" then
+       notifier.handle_formspec_submission(player, fields)
+    end
+end)
