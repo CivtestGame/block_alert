@@ -52,7 +52,7 @@ function util.check_new_player_move(player)
     for _, node_pos in pairs(old_alert_list) do
         local string_pos = minetest.pos_to_string(node_pos)
         if not lookup_table_new[string_pos] then
-            handle_player_exit_event(player, node_pos)
+            util.handle_player_exit_event(player, node_pos)
         end
         lookup_table_old[string_pos] = true
     end
@@ -60,7 +60,7 @@ function util.check_new_player_move(player)
     for _, node_pos in pairs(new_alert_list) do
         local string_pos = minetest.pos_to_string(node_pos)
         if not lookup_table_old[string_pos] then
-            handle_player_entry_event(player, node_pos)
+            util.handle_player_entry_event(player, node_pos)
         end
     end
 

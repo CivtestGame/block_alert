@@ -158,11 +158,11 @@ minetest.register_on_joinplayer(function(player)
       local nearby_snitches = SnitchRegistry.get_nearby(ppos)
       for _,entry in ipairs(nearby_snitches) do
          if vector.distance(ppos, entry.pos) < 10 then
-            local pname = player:get_player_name()
             local def = minetest.registered_nodes[entry.name]
             if def.on_proximity_join then
                def.on_proximity_join(entry.pos, player)
             end
+            local pname = player:get_player_name()
             entry.players_in_proximity[pname] = true
          end
       end
@@ -173,11 +173,11 @@ minetest.register_on_leaveplayer(function(player)
       local nearby_snitches = SnitchRegistry.get_nearby(ppos)
       for _,entry in ipairs(nearby_snitches) do
          if vector.distance(ppos, entry.pos) < 10 then
-            local pname = player:get_player_name()
             local def = minetest.registered_nodes[entry.name]
             if def.on_proximity_leave then
                def.on_proximity_leave(entry.pos, player)
             end
+            local pname = player:get_player_name()
             entry.players_in_proximity[pname] = false
          end
       end
@@ -188,10 +188,6 @@ minetest.register_on_placenode(function(pos, newnode, placer, oldnode,
       local nearby_snitches = SnitchRegistry.get_nearby(pos)
       for _,entry in ipairs(nearby_snitches) do
          if vector.distance(pos, entry.pos) < 10 then
-            local pname = ""
-            if placer then
-               pname = placer:get_player_name()
-            end
             local def = minetest.registered_nodes[entry.name]
             if def.on_proximity_place then
                def.on_proximity_place(entry.pos, placer, pos, newnode)
@@ -204,13 +200,22 @@ minetest.register_on_dignode(function(pos, oldnode, digger)
       local nearby_snitches = SnitchRegistry.get_nearby(pos)
       for _,entry in ipairs(nearby_snitches) do
          if vector.distance(pos, entry.pos) < 10 then
-            local pname = ""
-            if digger then
-               pname = digger:get_player_name()
-            end
             local def = minetest.registered_nodes[entry.name]
             if def.on_proximity_dig then
                def.on_proximity_dig(entry.pos, digger, pos, oldnode)
+            end
+         end
+      end
+end)
+
+minetest.register_on_dieplayer(function(player, reason)
+      local ppos = player:get_pos()
+      local nearby_snitches = SnitchRegistry.get_nearby(ppos)
+      for _,entry in ipairs(nearby_snitches) do
+         if vector.distance(ppos, entry.pos) < 10 then
+            local def = minetest.registered_nodes[entry.name]
+            if def.on_proximity_death then
+               def.on_proximity_death(entry.pos, player, reason)
             end
          end
       end
