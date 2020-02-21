@@ -13,6 +13,9 @@ minetest.register_node("block_alert:notifier",
         meta:set_string("notify_setting", "others")
         SnitchRegistry.register("block_alert:notifier", pos)
     end,
+    after_dig_node = function(pos, placer, itemstack, pointed_thing)
+       SnitchRegistry.unregister("block_alert:notifier", pos)
+    end,
     on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
        notifier.handle_formspec_open(pos, clicker)
     end,

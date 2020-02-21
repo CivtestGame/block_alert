@@ -118,6 +118,15 @@ minetest.register_globalstep(function(dtime)
          local ppos = player:get_pos()
          local nearby_snitches = SnitchRegistry.get_nearby(ppos)
          for _,entry in ipairs(nearby_snitches) do
+            -- Sanity check that nearby nodes actually exist in the world
+            local node = minetest.get_node(entry.pos)
+            if node.name ~= "ignore" and node.name ~= entry.name then
+               SnitchRegistry.unregister(entry.name, entry.pos)
+               minetest.log("Unregistered stale " .. entry.name .. " at ("
+                               .. vtos(entry.pos) .. ").")
+               goto continue
+            end
+
             local pname = player:get_player_name()
             local def = minetest.registered_nodes[entry.name]
             if vector.distance(ppos, entry.pos) < 10 then
@@ -137,6 +146,7 @@ minetest.register_globalstep(function(dtime)
                end
                entry.players_in_proximity[pname] = nil
             end
+            ::continue::
          end
       end
       timer = 0
