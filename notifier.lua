@@ -54,6 +54,12 @@ local function get_formspec(name)
     return table.concat(formspec, "")
 end
 
+function notifier.send_player_alert(pname, event_type, node_pos, notifier_name, ctgroup_id)
+    local message = ("%s %s %s at %s"):format(
+        pname, event_type, notifier_name, minetest.pos_to_string(node_pos))
+    pm.send_chat_group(ctgroup_id, message)
+end
+
 function notifier.handle_player_event(player, node_pos, event_type)
     local reinf = ct.get_reinforcement(node_pos)
     if reinf then
@@ -64,12 +70,10 @@ function notifier.handle_player_event(player, node_pos, event_type)
             -- Make sure that we don't send a message if the player is on the group
             local player_id = pm.get_player_by_name(pname).id
             if player_id and pm.get_player_group(player_id, reinf.ctgroup_id) then
-               return
+                return
             end
         end
-        local message = pname .. " " .. event_type .. " " .. meta:get_string("name")
-           .. " at " .. minetest.pos_to_string(node_pos)
-        pm.send_chat_group(reinf.ctgroup_id, message)
+        notifier.send_player_alert(pname, event_type, node_pos, meta:get_string("name"), reinf.ctgroup_id)
     end
 end
 
